@@ -1,0 +1,130 @@
+AttachmentSaver
+===============
+
+This plugin implements attachment storage and processing, integrated with
+ActiveRecord models and Ruby CGI/Rails-style uploads.  Image processing
+operations including a number of different resizing & thumbnailing modes are
+provided, and the architecture simplifies clean implementation of other types
+of processing.  Errors are carefully handled to minimize the possibility of
+broken uploads leaving incomplete or corrupt data.
+
+RMagick, MiniMagick, and ImageScience image processors are supported.
+
+
+Examples
+========
+
+A 'dumb' attachment store that saves minimal info
+-------------------------------------------------
+
+# in your model:
+class SomeModel
+  saves_attachment
+end
+
+# in your database schema:
+create_table :some_model do |t|
+  t.string   :storage_key,         :null => false
+end
+
+# in your new/update forms:
+file_field :some_model, :uploaded_data
+
+# no special controller handling is required.
+
+
+A 'dumb' attachment store that saves full file info automatically
+-----------------------------------------------------------------
+
+# as for above, but in the schema:
+create_table :some_model do |t|
+  t.string   :storage_key,         :null => false
+  t.string   :original_filename,   :null => false # as sent by the user's browser, with IE path removed
+  t.string   :content_type,        :null => false # as sent by the user's browser
+  t.integer  :size,                :null => false # file size in bytes
+  t.timestamps
+end
+
+
+An image store that automatically saves width and height and corrects mime types & file extensions
+--------------------------------------------------------------------------------------------------
+
+# in your models:
+class Image
+  saves_attachments :processor => 'rmagick'
+end
+
+# in your database schema:
+create_table :photos do |t|
+  t.string   :storage_key,         :null => false
+  t.string   :original_filename,   :null => false # as sent by the user's browser, with IE path removed
+  t.string   :content_type,        :null => false # corrected if the user's browser sent a mime type that didn't match the image
+  t.integer  :size,                :null => false # file size in bytes
+  t.integer  :width,               :null => false # set by the image processors
+  t.integer  :height,              :null => false # ditto
+  t.timestamps
+end
+
+
+An image store that resizes images to produce thumbnails etc.
+-------------------------------------------------------------
+
+# in your models:
+class Photo
+  saves_attachments :processor => 'RMagick', :derived_class => 'Thumbnail',
+    :formats => {:page_width => '520x',                # ImageMagick-style format string
+                 :small => [:shrink_to_fit, 250, 250], # or more explicit [operation, width, height] format
+                 :nav =>   [:cover_and_crop, 50,  50]} # lots of useful resize and/or crop modes available
+end
+
+class Thumbnail
+  saves_attachments
+end
+
+# in your database schema:
+create_table :photos do |t|
+  t.string   :storage_key,         :null => false
+  t.string   :original_filename,   :null => false # as sent by the user's browser, with IE path removed
+  t.string   :content_type,        :null => false # corrected if the user's browser sent a mime type that didn't match the image
+  t.integer  :size,                :null => false # file size in bytes
+  t.integer  :width,               :null => false # set by the image processors
+  t.integer  :height,              :null => false # ditto
+  t.timestamps
+end
+
+create_table :thumbnails do |t|
+  t.string   :original_type,       :null => false # multiple models can save their derived images as thumbnails
+  t.integer  :original_id,         :null => false
+  t.string   :format_name,         :null => false # from your :formats - eg. 'small', 'nav'
+  t.string   :storage_key,         :null => false # still required (but will be based on the original's, for convenience)
+  t.string   :content_type,        :null => false # these fields are optional (as they are for Photo)
+  t.integer  :size,                :null => false
+  t.integer  :width,               :null => false # but width and height are generally needed for layout
+  t.integer  :height,              :null => false
+  t.timestamps
+end
+
+
+A custom image-processing format using your image-processor's features
+----------------------------------------------------------------------
+
+# in a file in your lib/ directory that's required in somewhere:
+module AttachmentSaver::Processors::RMagick::Operations # or MiniMagick::Operations or ImageScience::Operations - see lib/processors
+  # this module is mixed in to the actual image objects built by the processor, so you can call its' methods directly
+  def wavy_black_and_white(wave_height, wave_length, &block)
+    # RMagick returns the new object; MiniMagick acts on the same object (so you must dup); ImageScience yields; so, look at the existing lib/processors to see the appropriate pattern
+    image = quantize(256, Magick::GRAYColorspace).wave(wave_height, wave_length)
+
+    # mix the operations in to the new image, for reuse
+    image.extend Operations
+
+    # yield up the new image
+    block.call(image)
+  end
+end
+
+# in your models:
+class Image
+  saves_attachments :processor => 'RMagick', :derived_class => 'SpecialImage',
+    :formats => {:flashback => [:wavy_and_black_and_white, 10,  200]}
+end
