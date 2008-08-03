@@ -16,6 +16,7 @@ module AttachmentSaver
       before_validation :before_validate_attachment # this callback does things like override the content-type based on the actual file data
       before_save       :save_attachment # this callback is where most of the goodness happens; note that it runs before save, so that it prevents the record being saved if processing raises; this is why our filenames can't be based on the instance ID
       after_save        :tidy_attachment
+      after_save        :close_open_file
       after_destroy     :delete_attachment
 
       if attachment_options[:formats] && reflect_on_association(:formats).nil? # this allows you to override our definition of the sizes association by simply defining it before calling has_attachment
@@ -90,6 +91,10 @@ module AttachmentSaver
         @uploaded_data = nil
       end
       @uploaded_file
+    end
+    
+    def close_open_file
+      @uploaded_file.close if @uploaded_file
     end
     
     def before_validate_attachment # overridden by the processors (and/or by the class we're mixed into)
