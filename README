@@ -51,7 +51,7 @@ An image store that automatically saves width and height and corrects mime types
 
 # in your models:
 class Image
-  saves_attachments :processor => 'rmagick'
+  saves_attachment :processor => 'rmagick'
 end
 
 # in your database schema:
@@ -71,14 +71,14 @@ An image store that resizes images to produce thumbnails etc.
 
 # in your models:
 class Photo
-  saves_attachments :processor => 'RMagick', :derived_class => 'Thumbnail',
+  saves_attachment :processor => 'RMagick', :derived_class => 'Thumbnail',
     :formats => {:page_width => '520x',                # ImageMagick-style format string
                  :small => [:shrink_to_fit, 250, 250], # or more explicit [operation, width, height] format
                  :nav =>   [:cover_and_crop, 50,  50]} # lots of useful resize and/or crop modes available
 end
 
 class Thumbnail
-  saves_attachments
+  saves_attachment
 end
 
 # in your database schema:
@@ -125,6 +125,6 @@ end
 
 # in your models:
 class Image
-  saves_attachments :processor => 'RMagick', :derived_class => 'SpecialImage',
+  saves_attachment :processor => 'RMagick', :derived_class => 'SpecialImage',
     :formats => {:flashback => [:wavy_and_black_and_white, 10,  200]}
 end
