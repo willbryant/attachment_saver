@@ -14,6 +14,12 @@ module AttachmentSaver
       
       def before_validate_attachment
         examine_attachment unless uploaded_file.nil? || derived_image?
+      rescue ImageProcessorError
+        # we examine all files, regardless of whether the client browser labelled them an
+        # image, because they may be an image with the wrong extension or content type.
+        # but this will raise for non-image files, so ignore such errors but make sure
+        # image? will return false, if it doesn't already.
+        self.content_type = "application/octet-stream" if image?
       end
 
       def process_attachment?

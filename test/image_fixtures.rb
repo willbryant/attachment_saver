@@ -51,11 +51,19 @@ class ImageFixtures
       :expected_extension => 'jpg' }
   end
   
+  def self.non_image_file
+    { :path => fixture_path('test.txt'),
+      :content_type => 'text/plain',
+      :original_filename => 'test.txt',
+      :expected_content_type => 'text/plain',
+      :expected_extension => 'txt' }
+  end
+  
   def self.all_readable
     [valid, wrong_extension, no_extension, empty_extension]
   end
   
   def self.all_unreadable
-    [corrupt]
+    [corrupt, non_image_file]
   end
 end

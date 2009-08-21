@@ -40,10 +40,23 @@ class ImageProcessorTest < Test::Unit::TestCase
     model_without_upload.expects(:uploaded_file).times(1).returns(nil)
     model_without_upload.expects(:examine_attachment).times(0)
     model_without_upload.before_validate_attachment
+    
     model_with_upload = SomeModel.new('application/octet-stream')
     model_with_upload.expects(:uploaded_file).times(1).returns('dummy')
     model_with_upload.expects(:examine_attachment).times(1)
     model_with_upload.before_validate_attachment
+    
+    model_with_non_image_upload = SomeModel.new('text/plain')
+    model_with_non_image_upload.expects(:uploaded_file).times(1).returns('dummy')
+    model_with_non_image_upload.expects(:examine_attachment).times(1).raises(ImageProcessorError)
+    model_with_non_image_upload.before_validate_attachment
+    assert_equal 'text/plain', model_with_non_image_upload.content_type
+    
+    model_with_mislabelled_non_image_upload = SomeModel.new('image/png')
+    model_with_mislabelled_non_image_upload.expects(:uploaded_file).times(1).returns('dummy')
+    model_with_mislabelled_non_image_upload.expects(:examine_attachment).times(1).raises(ImageProcessorError)
+    model_with_mislabelled_non_image_upload.before_validate_attachment
+    assert_equal 'application/octet-stream', model_with_mislabelled_non_image_upload.content_type
   end
   
   def test_from_geometry_string
