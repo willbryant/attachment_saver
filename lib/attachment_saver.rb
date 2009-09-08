@@ -1,5 +1,6 @@
 require 'attachment_saver_errors'
 require 'misc/file_size'
+require 'tmpdir'
 
 module AttachmentSaver
   module BaseMethods
@@ -114,7 +115,7 @@ module AttachmentSaver
     end
     
     def tempfile_directory # called by uploaded_file, overridden by the file datastore, which sets it to the base dir that it saves into itself, so that the files are put on the same partition & so can be directly hardlinked rather than copied
-      Dir::tmpdir
+      Dir.tmpdir
     end
     
     def file_extension=(extension) # used by processors to override the original extension

@@ -7,7 +7,7 @@ module AttachmentSaver
     module InColumn
       def self.included(base)
         base.attachment_options[:column_name] ||= 'data'
-        base.attachment_options[:temp_directory] ||= Dir::tmpdir
+        base.attachment_options[:temp_directory] ||= Dir.tmpdir
       end
       
       def save_attachment

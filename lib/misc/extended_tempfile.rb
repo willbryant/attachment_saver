@@ -1,7 +1,7 @@
 require 'tempfile'
 
 class ExtendedTempfile < Tempfile
-  def initialize(basename, tmpdir = Dir::tmpdir, extension = '')
+  def initialize(basename, tmpdir = Dir.tmpdir, extension = '')
     @extension = extension
     super(basename, tmpdir)
   end
