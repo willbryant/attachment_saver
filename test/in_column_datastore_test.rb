@@ -39,6 +39,7 @@ class InColumnDatastoreTest < Test::Unit::TestCase
 
   def test_save_attachment_for_data
     @uploaded_data = data = random_data
+    @save_upload = true
     save_attachment_test(data)
   end
   
@@ -48,6 +49,7 @@ class InColumnDatastoreTest < Test::Unit::TestCase
     File.open(@test_filename + '.src_file', 'wb+') do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_test(data)
     end
   end
@@ -58,6 +60,7 @@ class InColumnDatastoreTest < Test::Unit::TestCase
     Tempfile.open('src_file', File.dirname(@test_filename)) do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_test(data)
     end
   end
@@ -65,9 +68,9 @@ class InColumnDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_calls_processing
     @uploaded_data = expected_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(true)
     expects(:process_attachment_with_wrapping).times(1).returns do |filename|
-      puts "test"
       assert expected_data == File.read(filename)
     end
     
@@ -87,6 +90,7 @@ class InColumnDatastoreTest < Test::Unit::TestCase
   
   def test_in_storage?
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     save_attachment
     

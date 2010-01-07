@@ -17,7 +17,7 @@ module AttachmentSaver
       end
       
       def save_attachment
-        return unless @uploaded_data || @uploaded_file # this method is called every time the model is saved, not just when a new file has been uploaded
+        return unless @save_upload # this method is called every time the model is saved, not just when a new file has been uploaded
         
         old_storage_key = storage_key
         @old_filenames ||= []
@@ -67,6 +67,8 @@ module AttachmentSaver
           # successfully written to file; process the attachment
           process_attachment_with_wrapping(storage_filename) if process_attachment?
           # if there's exceptions later (ie. during save itself) that prevent the record from being saved, the finalizer will clean up the file
+
+          @save_upload = nil
         rescue Exception => ex
           FileUtils.rm_f(storage_filename) unless storage_key.blank? || ex.is_a?(Errno::EEXIST)
           self.storage_key = old_storage_key

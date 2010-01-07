@@ -80,11 +80,13 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_to_for_data
     @uploaded_data = data = random_data
+    @save_upload = true
     save_attachment_to_test(data)
   end
   
   def test_save_attachment_to_for_data_doesnt_clobber_existing
     @uploaded_data = random_data
+    @save_upload = true
     save_attachment_to_test_no_clobber_existing
   end
   
@@ -94,6 +96,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     File.open(@test_filename + '.src_file', 'wb+') do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test(data)
       save_test_independent_files(file, data)
     end
@@ -104,6 +107,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     File.open(@test_filename + '.src_file', 'wb') do |file|
       file.write(random_data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test_no_clobber_existing
     end
   end
@@ -114,6 +118,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     Tempfile.open('src_file', File.dirname(@test_filename)) do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test(data)
       save_test_same_file(file)
     end
@@ -124,6 +129,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     Tempfile.open('src_file', File.dirname(@test_filename)) do |file|
       file.write(random_data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test_no_clobber_existing
     end
   end
@@ -134,6 +140,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     Tempfile.open('src_file', File.dirname(@test_filename)) do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       FileUtils.expects(:ln).once.raises(RuntimeError)
       save_attachment_to_test(data)
       save_test_independent_files(file, data)
@@ -151,6 +158,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_with_random_filename
     @uploaded_data = data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     expects(:process_attachment).times(0)
 
@@ -163,6 +171,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
 
   def test_save_attachment_with_random_filename_retries_for_a_while
     @uploaded_data = random_data
+    @save_upload = true
     expects(:save_attachment_to).times(100).raises(Errno::EEXIST)
     expects(:process_attachment?).times(0)
     assert_raises(FileSystemAttachmentDataStoreError) { save_attachment } # as above
@@ -170,12 +179,17 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   
   class Named
-    attr_accessor :uploaded_data, :storage_key, :original_filename, :content_type
+    attr_accessor :storage_key, :original_filename, :content_type
   
     def self.attachment_options
       @@attachment_options ||= DEFAULT_ATTACHMENT_OPTIONS.dup
       @@attachment_options[:filter_filenames] ||= /[^\w\._-]/
       @@attachment_options
+    end
+    
+    def uploaded_data=(uploaded_data)
+      @uploaded_data = uploaded_data
+      @save_upload = true
     end
   
     include AttachmentSaver::InstanceMethods
@@ -208,10 +222,15 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   
   class Thumbnail
-    attr_accessor :uploaded_data, :storage_key, :content_type, :original, :format_name
+    attr_accessor :storage_key, :content_type, :original, :format_name
   
     def self.attachment_options
       @@attachment_options ||= DEFAULT_ATTACHMENT_OPTIONS.dup
+    end
+    
+    def uploaded_data=(uploaded_data)
+      @uploaded_data = uploaded_data
+      @save_upload = true
     end
   
     include AttachmentSaver::InstanceMethods
@@ -220,6 +239,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_new_attachment_with_parent_filename
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     expects(:process_attachment).times(0)
     save_attachment
@@ -299,6 +319,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_calls_processing
     @uploaded_data = expected_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(true)
     expects(:process_attachment_with_wrapping).times(1).returns do |filename|
       assert expected_data == File.read(filename)
@@ -311,6 +332,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_deletes_immediately_if_processing_fails
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(true)
     expects(:process_attachment_with_wrapping).times(1).raises(AttachmentProcessorError)
 
@@ -326,11 +348,13 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     expects(:process_attachment?).times(2).returns(false)
 
     @uploaded_data = random_data
+    @save_upload = true
     save_attachment
     tidy_attachment # after_save
     old_filename = storage_filename
 
     @uploaded_data = random_data
+    @save_upload = true
     save_attachment
     tidy_attachment # after_save
     
@@ -340,6 +364,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_save_attachment_with_old_filename_keeps_old_if_processing_fails
     @uploaded_data = data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     save_attachment
     tidy_attachment # after_save
@@ -347,6 +372,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     old_filename = storage_filename
 
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(true)
     expects(:process_attachment_with_wrapping).times(1).raises(AttachmentProcessorError)
     assert_raises(AttachmentProcessorError) { save_attachment }
@@ -362,6 +388,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_destroy_attachment
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     save_attachment
     tidy_attachment # after_save
@@ -380,6 +407,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   
   def test_in_storage?
     @uploaded_data = random_data
+    @save_upload = true
     expects(:process_attachment?).times(1).returns(false)
     save_attachment
     
@@ -399,6 +427,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
   def test_permission_setting_for_save_from_data
     self.class.attachment_options[:file_permissions] = TEST_FILE_MODE
     @uploaded_data = data = random_data
+    @save_upload = true
     save_attachment_to_test(data)
     assert_equal TEST_FILE_MODE, File.stat(@test_filename).mode & 0777
   end
@@ -410,6 +439,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     File.open(@test_filename + '.src_file', 'wb+') do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test(data)
       save_test_independent_files(file, data)
     end
@@ -423,6 +453,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     Tempfile.open('src_file', File.dirname(@test_filename)) do |file|
       file.write(data)
       @uploaded_file = file
+      @save_upload = true
       save_attachment_to_test(data)
       save_test_same_file(file)
     end

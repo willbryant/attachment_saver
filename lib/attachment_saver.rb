@@ -52,9 +52,13 @@ module AttachmentSaver
         @uploaded_data = uploaded.read
         @uploaded_file = nil
       elsif uploaded
-        @uploaded_file = uploaded
         @uploaded_data = nil
+        @uploaded_file = uploaded
+      else
+        @uploaded_data = @uploaded_file = @save_upload = nil
+        return
       end
+      @save_upload = true
 
       self.size =              uploaded.size                                      if respond_to?(:size=)
       self.content_type =      uploaded.content_type.strip.downcase               if respond_to?(:content_type=) && uploaded.respond_to?(:content_type)
