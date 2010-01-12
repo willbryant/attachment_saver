@@ -90,12 +90,12 @@ module AttachmentSaver
         h = w unless cross # there's <w>x<h>, there's <w>x, there's x<h>, and then there's just plain <n>, which means <w>=<h>=<n>
         return [:scale_by, (w || h).to_f/100, (h || w).to_f/100] if flag == '%'
         operation = case flag
-          when nil: :scale_to_fit
-          when '!': w && h ? :squish : :scale_to_fit
-          when '>': :shrink_to_fit
-          when '<': :expand_to_fit
-          when '*': :scale_to_cover
-          when '#': :cover_and_crop
+          when nil then :scale_to_fit
+          when '!' then w && h ? :squish : :scale_to_fit
+          when '>' then :shrink_to_fit
+          when '<' then :expand_to_fit
+          when '*' then :scale_to_cover
+          when '#' then :cover_and_crop
         end
         [operation, w ? w.to_i : nil, h ? h.to_i : nil]
       end
