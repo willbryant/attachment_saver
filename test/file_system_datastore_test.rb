@@ -37,6 +37,12 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     Array.new(length).collect {rand(256)} .pack('C*')
   end
   
+  def read_file(filename)
+    File.read(filename, :encoding => "ascii-8bit") # ruby 1.9
+  rescue TypeError
+    File.read(filename) # ruby 1.8
+  end
+  
   def save_attachment_to_with_record(filename)
     @saved_to = filename
     save_attachment_to_without_record(filename)
@@ -50,7 +56,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     save_attachment_to(@test_filename)
     
     assert File.exist?(@test_filename), "no file #{@test_filename} created"
-    assert expected_data == File.read(@test_filename), "data written to #{@test_filename} doesn't match"
+    assert expected_data == read_file(@test_filename), "data written to #{@test_filename} doesn't match"
   end
   
   def save_attachment_to_test_no_clobber_existing
@@ -59,7 +65,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     
     assert_raises(Errno::EEXIST) { save_attachment_to(@test_filename) }
     assert File.exist?(@test_filename), "file #{@test_filename} deleted"
-    assert 'test file' == File.read(@test_filename), "contents of #{@test_filename} clobbered"
+    assert 'test file' == read_file(@test_filename), "contents of #{@test_filename} clobbered"
   end
   
   def save_test_independent_files(uploaded_file, original_data)
@@ -67,7 +73,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     uploaded_file.write('new file data')
     uploaded_file.truncate('new file data'.length)
     uploaded_file.flush
-    assert original_data == File.read(@test_filename), "stored file appears to be a hardlink to the uploaded file"
+    assert original_data == read_file(@test_filename), "stored file appears to be a hardlink to the uploaded file"
   end
   
   def save_test_same_file(uploaded_file)
@@ -75,7 +81,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     uploaded_file.write('new file data')
     uploaded_file.truncate('new file data'.length)
     uploaded_file.flush
-    assert 'new file data' == File.read(@test_filename), "stored file is not a hardlink to the uploaded file"
+    assert 'new file data' == read_file(@test_filename), "stored file is not a hardlink to the uploaded file"
   end
   
   def test_save_attachment_to_for_data
@@ -166,7 +172,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     
     assert !storage_key.blank?, "storage_key not set"
     assert File.exist?(storage_filename), "no file #{storage_filename} created"
-    assert data == File.read(storage_filename), "data written to #{storage_filename} doesn't match"
+    assert data == read_file(storage_filename), "data written to #{storage_filename} doesn't match"
   end
 
   def test_save_attachment_with_random_filename_retries_for_a_while
@@ -208,7 +214,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     assert !named.storage_key.blank?, "named storage_key not set"
     assert_equal 'm_y_file-test12__.dat', named.storage_key.gsub(/.*\//, ''), "named storage key doesn't correspond to original filename"
     assert File.exist?(named.storage_filename), "no named file #{named.storage_filename} created"
-    assert data == File.read(named.storage_filename), "data written to #{named.storage_filename} doesn't match"
+    assert data == read_file(named.storage_filename), "data written to #{named.storage_filename} doesn't match"
   end
   
   def test_save_new_attachment_with_filtered_filename_retries_only_for_a_while
@@ -258,7 +264,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     assert_equal File.dirname(storage_key), File.dirname(thumbnail.storage_key), "thumbnail not saved to same directory as parent"
     assert_equal storage_key.gsub(/\.\w+$/, '_thumb.test'), thumbnail.storage_key, "thumbnail storage key doesn't correspond to parent"
     assert File.exist?(thumbnail.storage_filename), "no thumbnail file #{thumbnail.storage_filename} created"
-    assert thumbnail_data == File.read(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
+    assert thumbnail_data == read_file(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
   end
   
   def test_save_new_attachment_with_filtered_parent_filename
@@ -284,7 +290,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     assert_equal File.dirname(named.storage_key), File.dirname(thumbnail.storage_key), "thumbnail not saved to same directory as parent"
     assert_equal named.storage_key.gsub(/\.\w+$/, '_thumb.test'), thumbnail.storage_key, "thumbnail storage key doesn't correspond to parent"
     assert File.exist?(thumbnail.storage_filename), "no thumbnail file #{thumbnail.storage_filename} created"
-    assert thumbnail_data == File.read(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
+    assert thumbnail_data == read_file(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
   end
   
   def test_save_new_attachment_with_filtered_parent_filename_adds_suffix_if_existing
@@ -313,7 +319,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     assert_equal File.dirname(named.storage_key), File.dirname(thumbnail.storage_key), "thumbnail not saved to same directory as parent"
     assert_equal named.storage_key.gsub(/\.\w+$/, '_thumb3.test'), thumbnail.storage_key, "thumbnail storage key doesn't correspond to parent"
     assert File.exist?(thumbnail.storage_filename), "no thumbnail file #{thumbnail.storage_filename} created"
-    assert thumbnail_data == File.read(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
+    assert thumbnail_data == read_file(thumbnail.storage_filename), "data written to #{thumbnail.storage_filename} doesn't match"
   end
   
   
@@ -322,7 +328,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     @save_upload = true
     expects(:process_attachment?).times(1).returns(true)
     expects(:process_attachment_with_wrapping).times(1).returns do |filename|
-      assert expected_data == File.read(filename)
+      assert expected_data == read_file(filename)
     end
     expects(:save_attachment_to)
     
@@ -379,7 +385,7 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
     
     assert_equal old_key, storage_key
     assert File.exist?(old_filename), "old file was removed before save"
-    assert data == File.read(storage_filename), "data in old file damaged"
+    assert data == read_file(storage_filename), "data in old file damaged"
     
     tidy_attachment # check the old-file deletion code wouldn't destroy it either (presumably after another save attempt)
     assert File.exist?(old_filename), "old file was removed before save"

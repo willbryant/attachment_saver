@@ -32,7 +32,8 @@ class InColumnDatastoreTest < Test::Unit::TestCase
     expects(:process_attachment?).times(1).returns(false)
     save_attachment
     
-    assert !data.blank?, "no data saved"
+    assert !data.nil? && data != "", "no data saved"
+    data.force_encoding("ascii-8bit") if data.respond_to?(:force_encoding)
     assert expected_data == data, "data stored doesn't match"
   end
 
