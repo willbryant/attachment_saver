@@ -68,15 +68,15 @@ module AttachmentSaver
         
         def corrected_mime_type
           case mime_type
-            when 'image/x-jpeg':   'image/jpeg'
-            when 'image/x-magick': nil
+            when 'image/x-jpeg'   then 'image/jpeg'
+            when 'image/x-magick' then nil
             else mime_type
           end
         end
         
         def file_type_extension
           case format.downcase
-            when 'jpeg': 'jpg'
+            when 'jpeg' then 'jpg'
             else format.downcase
           end
         end

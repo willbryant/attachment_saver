@@ -69,7 +69,7 @@ module AttachmentSaver
         
         def file_type_extension
           case format.downcase
-            when 'jpeg': 'jpg'
+            when 'jpeg' then 'jpg'
             else format.downcase
           end
         end
