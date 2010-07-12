@@ -7,7 +7,7 @@ class FileSystemAttachmentDataStoreError < AttachmentDataStoreError; end
 module AttachmentSaver
   module DataStores
     module FileSystem
-      RETRIES = 100
+      RETRIES = 100 # max attempts at finding a unique storage key.  very rare to have to retry at all, so if it fails after 100 attempts, something's seriously wrong.
       
       def self.included(base)
         base.attachment_options[:storage_directory] ||= File.join(RAILS_ROOT, 'public') # this is the part of the full filename that _doesn't_ form part of the HTTP path to the files
