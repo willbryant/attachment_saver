@@ -74,7 +74,7 @@ module AttachmentSaver
           @uploaded_file.read
         end
       else
-        !@uploaded_data.blank?
+        @uploaded_data
       end
     end
     

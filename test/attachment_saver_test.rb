@@ -68,10 +68,11 @@ class AttachmentSaverTest < Test::Unit::TestCase
     assert_equal 7, model.size
     assert_equal nil, model.content_type
     assert_equal nil, model.original_filename
+    assert_equal 'test #1', model.uploaded_data # before converting to an uploaded_file
     assert_not_equal nil, model.uploaded_file
     assert model.uploaded_file.is_a?(Tempfile)
     assert_equal model.uploaded_file.object_id, model.uploaded_file.object_id, 'uploaded_file should return the same instance each time'
-    assert_equal 'test #1', model.uploaded_data
+    assert_equal 'test #1', model.uploaded_data # after converting to an uploaded_file
     assert_equal 'test #1', contents_of(model.uploaded_file)
     assert_equal 'test #1', model.uploaded_data
     assert_equal 'bin', model.file_extension
