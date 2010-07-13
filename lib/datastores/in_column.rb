@@ -13,12 +13,7 @@ module AttachmentSaver
       def save_attachment
         return unless @save_upload # this method is called every time the model is saved, not just when a new file has been uploaded
 
-        if @uploaded_data
-          send("#{self.class.attachment_options[:column_name]}=", @uploaded_data)
-        else
-          @uploaded_file.rewind
-          send("#{self.class.attachment_options[:column_name]}=",  @uploaded_file.read)
-        end
+        send("#{self.class.attachment_options[:column_name]}=", uploaded_data)
 
         save_temporary_and_process_attachment if process_attachment?
 

@@ -13,6 +13,19 @@ class InColumnDatastoreTest < Test::Unit::TestCase
 
   include AttachmentSaver::DataStores::InColumn
   
+  def uploaded_data
+    if @uploaded_data.nil?
+      if @uploaded_file.nil?
+        nil
+      else
+        @uploaded_file.rewind
+        @uploaded_file.read
+      end
+    else
+      @uploaded_data
+    end
+  end
+    
   def setup
     @test_filename = File.join(RAILS_ROOT, "tmp", "test#{$$}.dat")
     @uploaded_data = nil
