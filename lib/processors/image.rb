@@ -85,7 +85,7 @@ module AttachmentSaver
       # operation method name (see Operations below, plus any from your chosen image processor)
       # followed by the arguments to that method.
       def self.from_geometry_string(geom)
-        match, w, cross, h, flag = geom.match(/^(\d+\.?\d*)?(?:([xX])(\d+\.?\d*)?)?([!%<>#])?$/).to_a
+        match, w, cross, h, flag = geom.match(/^(\d+\.?\d*)?(?:([xX])(\d+\.?\d*)?)?([!%<>#*])?$/).to_a
         raise "couldn't parse geometry string '#{geom}'" if match.nil? || (w.nil? && h.nil?)
         h = w unless cross # there's <w>x<h>, there's <w>x, there's x<h>, and then there's just plain <n>, which means <w>=<h>=<n>
         return [:scale_by, (w || h).to_f/100, (h || w).to_f/100] if flag == '%'
