@@ -16,7 +16,6 @@ end
 RAILS_ROOT = File.dirname(__FILE__)
 RAILS_ENV = ENV['RAILS_ENV'] ||= 'test'
 TEST_TEMP_DIR = File.join(File.dirname(__FILE__), 'tmp', 'attachment_saver_test')
-ActiveRecord::Base.logger = Logger.new(File.join(File.dirname(__FILE__), "/log/#{ENV['RAILS_ENV']}.log"))
 
 database_config = YAML::load(IO.read(File.join(File.dirname(__FILE__), '/database.yml')))
 ActiveRecord::Base.establish_connection(database_config[ENV['RAILS_ENV']])
