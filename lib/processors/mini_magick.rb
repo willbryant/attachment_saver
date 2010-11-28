@@ -26,10 +26,10 @@ module AttachmentSaver
       
       def examine_attachment
         with_image_attributes(uploaded_file.path) do |original_image|
-          self.width = original_image.width if respond_to?(:width)
-          self.height = original_image.height if respond_to?(:height)
           self.content_type = original_image.mime_type unless self.class.attachment_options[:keep_content_type] || original_image.mime_type.blank?
           self.file_extension = original_image.file_type_extension unless self.class.attachment_options[:keep_file_extension] || original_image.file_type_extension.blank?
+          self.width = original_image.width if respond_to?(:width)
+          self.height = original_image.height if respond_to?(:height)
         end
       rescue AttachmentSaverError
         raise
@@ -74,9 +74,9 @@ module AttachmentSaver
           end
         end
         
-        def format; @__format || self[:format]; end  # cached as each call to [] results in a process execution!
-        def width;   @__width || self[:width];  end  # note that we can cache as we don't ever modify instances -
-        def height; @__height || self[:height]; end  # whereas MiniMagick may, in general.
+        def format; @__format ||= self[:format]; end  # cached as each call to [] results in a process execution!
+        def width;   @__width ||= self[:width];  end  # note that we can cache as we don't ever modify instances -
+        def height; @__height ||= self[:height]; end  # whereas MiniMagick may, in general.
         
         def resize_to(new_width, new_height, &block)
           image = dup
