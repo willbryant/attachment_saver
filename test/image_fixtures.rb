@@ -52,11 +52,11 @@ class ImageFixtures
   end
   
   def self.non_image_file
-    { :path => fixture_path('test.txt'),
-      :content_type => 'text/plain',
-      :original_filename => 'test.txt',
-      :expected_content_type => 'text/plain',
-      :expected_extension => 'txt' }
+    { :path => fixture_path('test.js'),
+      :content_type => 'application/javascript',
+      :original_filename => 'test.js',
+      :expected_content_type => 'application/javascript',
+      :expected_extension => 'js' }
   end
   
   def self.all_readable
