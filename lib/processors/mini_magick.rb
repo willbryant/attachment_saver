@@ -14,7 +14,11 @@ module AttachmentSaver
         # note that we are instantiating minimagick on the file itself, not a copy (which is
         # what gets produced if you call from_file); we don't do any mutating operations on
         # our instances themselves (resize_to and crop_to create new instances).
-        image = ::MiniMagick::Image.new(filename)
+        if ::MiniMagick::Image.respond_to?(:open) # v3
+          image = ::MiniMagick::Image.open(filename)
+        else # v1
+          image = ::MiniMagick::Image.new(filename)
+        end
         block.call(image.extend(Operations))
       end
       
