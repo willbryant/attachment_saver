@@ -80,7 +80,7 @@ class MiniMagick::Image
   
   # creates an independent copy of the file.
   def dup
-    if ::MiniMagick::Image.respond_to?(:open) # v3
+    if ::MiniMagick::Image.respond_to?(:read) # v3
       self.class.read(to_blob)
     else # v1
       self.class.from_blob(to_blob, File.extname(path))
