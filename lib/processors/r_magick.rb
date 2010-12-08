@@ -39,7 +39,7 @@ module AttachmentSaver
       def process_image(original_image, derived_format_name, resize_format)
         resize_format = Image.from_geometry_string(resize_format) if resize_format.is_a?(String)
 
-        original_image.send(*resize_format) do |derived_image|
+        result = original_image.send(*resize_format) do |derived_image|
           return nil unless want_format?(derived_format_name, derived_image.width, derived_image.height)
 
           # both original_filename and content_type must be defined for parents when using image processing
@@ -61,6 +61,20 @@ module AttachmentSaver
             :file_extension => derived_extension,
             :uploaded_data => temp }
         end
+
+        # modern versions of RMagick don't leak memory.  however, the (many and large) internal
+        # buffers malloced inside the ImageMagick library are not allocated via the Ruby memory
+        # management functions.  as Ruby GC runs are normally triggered at the point when those Ruby
+        # memory management functions request a larger heap, ImageMagick's extra allocations will
+        # not trigger a GC run.  so while no memory has been leaked - all the allocations by the
+        # ImageMagick library *will* get freed when GC runs - GC will typically not run even if you
+        # process a series of images and end up using all of the memory that can be made available
+        # to the process, at which point your process dies!  until such time as RMagick rewraps the
+        # ImageMagick memory allocation functions to put them through Ruby's (as was done in the
+        # as-yet-uncompleted MagickWand project), we force a GC after each image processing to
+        # ensure that your processes stay happy.
+        GC.start
+        result
       end
       
       module Operations
