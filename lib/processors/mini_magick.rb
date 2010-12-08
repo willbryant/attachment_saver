@@ -93,7 +93,7 @@ module AttachmentSaver
           left = (width - new_width)/2
           right = (height - new_height)/2
           image = dup
-          image.crop("#{new_width}x#{new_height}+#{left}+#{right}")
+          image << "-crop #{new_width}x#{new_height}+#{left}+#{right} +repage" # mini_magick's #crop doesn't support the repage flag
           image.extend Operations
           block.call(image)
         end
