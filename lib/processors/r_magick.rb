@@ -110,7 +110,7 @@ module AttachmentSaver
         end
         
         def crop_to(new_width, new_height, &block) # crops to the center
-          image = crop(Magick::CenterGravity, new_width, new_height)
+          image = crop(Magick::CenterGravity, new_width, new_height, true)
           image.extend Operations
           block.call(image)
         end
