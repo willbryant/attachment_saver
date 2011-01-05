@@ -68,7 +68,7 @@ module ImageProcessorTests
     model = processor_model.new(File.open(fixture[:path], 'rb'))
     model.content_type = fixture[:content_type]
     model.original_filename = fixture[:original_filename]
-    model.process_attachment(model.uploaded_file.path)
+    model.process_attachment(model.uploaded_file_path)
     
     ImageOperations.expected_results.each do |format_name, size|
       derived = model.find_derived(format_name)

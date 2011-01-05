@@ -165,11 +165,12 @@ module AttachmentSaver
           # support hardlinks, or if the 'uploaded' file isn't a temporary uploaded file at all
           # (presumably someone running an import job) - we don't want any nasty semantics 
           # surprises with non-uploaded files!
-          if @uploaded_file.is_a?(Tempfile)
-            @uploaded_file.flush
+          uploaded_tempfile = @uploaded_file.respond_to?(:tempfile) ? @uploaded_file.tempfile : @uploaded_file
+          if uploaded_tempfile.is_a?(Tempfile)
+            uploaded_tempfile.flush
             begin
-              FileUtils.ln(@uploaded_file.path, filename)
-              (File.chmod(self.class.attachment_options[:file_permissions], @uploaded_file.path) rescue nil) unless self.class.attachment_options[:file_permissions].nil? 
+              FileUtils.ln(uploaded_tempfile.path, filename)
+              (File.chmod(self.class.attachment_options[:file_permissions], uploaded_tempfile.path) rescue nil) unless self.class.attachment_options[:file_permissions].nil? 
               return # successfully linked, we're done
             rescue
               # ignore and fall through do, it the long way

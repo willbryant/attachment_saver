@@ -20,7 +20,7 @@ module AttachmentSaver
       end
       
       def examine_attachment
-        with_image_attributes(uploaded_file.path) do |original_image|
+        with_image_attributes(uploaded_file_path) do |original_image|
           self.width = original_image.width if respond_to?(:width)
           self.height = original_image.height if respond_to?(:height)
           self.content_type = original_image.mime_type unless self.class.attachment_options[:keep_content_type] || original_image.mime_type.nil?

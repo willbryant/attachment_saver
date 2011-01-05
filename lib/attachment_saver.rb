@@ -98,8 +98,15 @@ module AttachmentSaver
       @uploaded_file
     end
     
+    def uploaded_file_path
+      uploaded_file.respond_to?(:tempfile) ?
+        uploaded_file.tempfile.path : # rails 3
+        uploaded_file.path # rails 2
+    end
+    
     def close_open_file
-      @uploaded_file.close if @uploaded_file
+      @uploaded_file.close if @uploaded_file && @uploaded_file.respond_to?(:close)
+      @uploaded_file.tempfile.close if @uploaded_file.respond_to?(:tempfile) && @uploaded_file.tempfile.respond_to?(:close)
     end
     
     def before_validate_attachment # overridden by the processors (and/or by the class we're mixed into)
