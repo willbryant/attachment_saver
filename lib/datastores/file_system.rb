@@ -10,8 +10,8 @@ module AttachmentSaver
       RETRIES = 100 # max attempts at finding a unique storage key.  very rare to have to retry at all, so if it fails after 100 attempts, something's seriously wrong.
       
       def self.included(base)
-        base.attachment_options[:storage_directory] ||= File.join(RAILS_ROOT, 'public') # this is the part of the full filename that _doesn't_ form part of the HTTP path to the files
-        base.attachment_options[:storage_path_base] ||= RAILS_ENV == 'production' ? base.table_name : File.join(RAILS_ENV, base.table_name) # and this is the part that does.
+        base.attachment_options[:storage_directory] ||= File.join(Rails.root, 'public') # this is the part of the full filename that _doesn't_ form part of the HTTP path to the files
+        base.attachment_options[:storage_path_base] ||= Rails.env == 'production' ? base.table_name : File.join(Rails.env, base.table_name) # and this is the part that does.
         base.attachment_options[:filter_filenames] = Regexp.new(base.attachment_options[:filter_filenames]) if base.attachment_options[:filter_filenames].is_a?(String) # may be nil, in which case the normal randomised-filename scheme is used instead of the filtered-original-filename scheme
         base.attachment_options[:file_permissions] = 0664 unless base.attachment_options.has_key?(:file_permissions) # we don't use || as nil is a meaningful value for this option - it means to not explicitly set the file permissions
       end
