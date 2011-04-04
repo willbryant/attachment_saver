@@ -1,5 +1,5 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
-require 'test/image_fixtures'
+require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'image_fixtures'))
 
 class DerivedImage < ActiveRecord::Base
   saves_attachment

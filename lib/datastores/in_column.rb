@@ -36,7 +36,8 @@ module AttachmentSaver
       end
       
       def save_temporary_and_process_attachment
-        Tempfile.open("asctemp", FileUtils.mkdir_p(self.class.attachment_options[:temp_directory])) do |temp|
+        FileUtils.mkdir_p(self.class.attachment_options[:temp_directory])
+        Tempfile.open("asctemp", self.class.attachment_options[:temp_directory]) do |temp|
           temp.binmode
           temp.write(send(self.class.attachment_options[:column_name]))
           temp.flush

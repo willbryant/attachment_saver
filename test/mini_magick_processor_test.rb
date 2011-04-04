@@ -1,4 +1,4 @@
-require 'test/image_processor_test_common'
+require File.expand_path(File.join(File.dirname(__FILE__), 'image_processor_test_common'))
 require 'processors/mini_magick'
 
 class MiniMagickProcessorTest < Test::Unit::TestCase

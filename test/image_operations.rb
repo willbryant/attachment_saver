@@ -1,4 +1,4 @@
-require 'test/image_fixtures'
+require File.expand_path(File.join(File.dirname(__FILE__), 'image_fixtures'))
 
 class ImageOperations
   def self.original_image

@@ -1,7 +1,7 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
 require 'attachment_saver'
-require 'test/image_fixtures'
-require 'test/image_operations'
+require File.expand_path(File.join(File.dirname(__FILE__), 'image_fixtures'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'image_operations'))
 
 module ImageProcessorTestModel
   attr_accessor :content_type, :original_filename, :width, :height

@@ -7,6 +7,6 @@ class ExtendedTempfile < Tempfile
   end
   
   def make_tmpname(basename, n)
-    sprintf('%s.%d.%d.%s', basename, $$, n, @extension)
+    sprintf('%s.%d.%d.%s', basename, $$, n || 0, @extension)
   end
 end

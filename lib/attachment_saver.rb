@@ -88,7 +88,8 @@ module AttachmentSaver
         # temporary in any case - so doing this here represents no extra overhead (remember,
         # uploaded files over the magic size built into the CGI module are saved to files in
         # the first place, so we know that the overhead here is minimal anyway).
-        temp = Tempfile.new("asutemp", FileUtils.mkdir_p(tempfile_directory))
+        FileUtils.mkdir_p(tempfile_directory)
+        temp = Tempfile.new("asutemp", tempfile_directory)
         temp.binmode
         temp.write(@uploaded_data)
         temp.flush

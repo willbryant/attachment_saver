@@ -26,7 +26,7 @@ database_config = YAML::load(IO.read(File.join(File.dirname(__FILE__), '/databas
 ActiveRecord::Base.establish_connection(database_config[ENV['RAILS_ENV']])
 load(File.join(File.dirname(__FILE__), "/schema.rb"))
 
-require 'init' # load attachment_saver
+require File.expand_path(File.join(File.dirname(__FILE__), '../init')) # load attachment_saver
 
 at_exit do # at_exits are run in reverse of declaration order, and Test::Unit runs from an at_exit, so we must declare ours before that jrequire below
   FileUtils.rm_rf(File.join(Rails.root, 'public', 'test'))
