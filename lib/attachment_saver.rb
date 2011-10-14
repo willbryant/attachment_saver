@@ -1,3 +1,4 @@
+require 'active_support/core_ext/class/inheritable_attributes.rb' unless defined?(class_inheritable_accessor)
 require 'attachment_saver_errors'
 require 'misc/file_size'
 require 'tmpdir'
