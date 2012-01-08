@@ -12,7 +12,7 @@ class AttachmentSaverTest < Test::Unit::TestCase
   
   class SomeModel
     include AttachmentSaver::InstanceMethods
-    class_inheritable_accessor :attachment_options
+    class_attribute :attachment_options
 
     attr_accessor :size, :content_type, :original_filename
   end

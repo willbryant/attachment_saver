@@ -1,4 +1,3 @@
-require 'active_support/core_ext/class/inheritable_attributes.rb' unless defined?(class_inheritable_accessor)
 require 'attachment_saver_errors'
 require 'misc/file_size'
 require 'tmpdir'
@@ -9,7 +8,7 @@ module AttachmentSaver
       extend ClassMethods
       include InstanceMethods
       
-      class_inheritable_accessor :attachment_options
+      class_attribute :attachment_options
       self.attachment_options = options
 
       attachment_options[:datastore] ||= 'file_system'
