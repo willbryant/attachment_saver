@@ -28,7 +28,9 @@ module AttachmentSaver
       end
       
       if attachment_options[:processor]
-        require "processors/#{attachment_options[:processor].to_s.underscore}" unless Processors.const_defined?(attachment_options[:processor].to_s.classify)
+        unless Object.const_defined?(:Processors) && Processors.const_defined?(attachment_options[:processor].to_s.classify)
+          require "processors/#{attachment_options[:processor].to_s.underscore}"
+        end
         include Processors.const_get(attachment_options[:processor].to_s.classify)
       end
     end
