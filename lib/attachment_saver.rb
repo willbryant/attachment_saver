@@ -167,3 +167,5 @@ module AttachmentSaver
     end
   end
 end
+
+ActiveRecord::Base.send(:extend, AttachmentSaver::BaseMethods)
