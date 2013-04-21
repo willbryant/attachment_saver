@@ -1,12 +1,15 @@
+#!/usr/bin/env rake
+
 require 'rake'
 require 'rake/testtask'
 
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test the attachment_saver plugin.'
+desc 'Test the columns_on_demand plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
+  t.libs << 'test'
+  t.pattern = 'test/*_test.rb'
   t.verbose = true
 end
