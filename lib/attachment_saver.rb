@@ -46,7 +46,7 @@ module AttachmentSaver
       # until we have all the attributes, and then until validation passes - so we just retain
       # the data or file reference for now.
       if uploaded.is_a?(String) # we allow people to upload into the file field using a normal input element (eg. a textarea)
-        return if uploaded.blank? # this handles the case when a form has a file field but no file is selected - most browsers submit an empty string then (annoyingly)
+        return if uploaded.empty? # this handles the case when a form has a file field but no file is selected - most browsers submit an empty string then (annoyingly)
         @uploaded_data = uploaded
         @uploaded_file = nil
       elsif uploaded.is_a?(StringIO)
@@ -62,7 +62,7 @@ module AttachmentSaver
       end
       @save_upload = true
 
-      self.size =              uploaded.size                                      if respond_to?(:size=)
+      self.size =              uploaded.respond_to?(:bytesize) ? uploaded.bytesize : uploaded.size if respond_to?(:size=)
       self.content_type =      uploaded.content_type.strip.downcase               if respond_to?(:content_type=) && uploaded.respond_to?(:content_type)
       self.original_filename = trim_original_filename(uploaded.original_filename) if respond_to?(:original_filename=) && uploaded.respond_to?(:original_filename)
     end

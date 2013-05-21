@@ -11,6 +11,6 @@ desc 'Test the columns_on_demand plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
-  t.pattern = 'test/*_test.rb'
+  t.test_files = FileList['test/*_test.rb']
   t.verbose = true
 end

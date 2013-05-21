@@ -72,7 +72,7 @@ class ModelTest < Test::Unit::TestCase
   end
   
   def uploaded_file_from(fixture)
-    f = File.open(fixture[:path])
+    f = File.open(fixture[:path], "rb")
     f.extend ValidUploadedFileAttributes
     f.fixture = fixture
     f
@@ -83,6 +83,7 @@ class ModelTest < Test::Unit::TestCase
     assert_equal ImageFixtures::valid[:expected_content_type], model.content_type
     assert_equal ImageFixtures::valid[:expected_extension], model.file_extension
     assert_equal ImageFixtures::valid[:expected_extension], AttachmentSaver::split_filename(model.storage_filename).last
+    assert_equal ImageFixtures::valid[:size], model.size
     assert File.read(ImageFixtures::valid[:path]) == File.read(model.storage_filename), "stored data doesn't match!"
   end
   

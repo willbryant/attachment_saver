@@ -10,7 +10,8 @@ class ImageFixtures
       :width => 448,
       :height => 600,
       :expected_content_type => 'image/jpeg',
-      :expected_extension => 'jpg' }
+      :expected_extension => 'jpg',
+      :size => 66335 }
   end
   
   def self.wrong_extension

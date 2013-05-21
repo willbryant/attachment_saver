@@ -80,6 +80,23 @@ class AttachmentSaverTest < Test::Unit::TestCase
     assert_equal 'ext', model.file_extension
     
     model = SomeModel.new
+    data = File.open(ImageFixtures::valid[:path], "rb").read
+    model.uploaded_data = data
+    assert_equal ImageFixtures::valid[:size], model.size
+    assert_equal nil, model.content_type
+    assert_equal nil, model.original_filename
+    assert_equal data, model.uploaded_data # before converting to an uploaded_file
+    assert_not_equal nil, model.uploaded_file
+    assert model.uploaded_file.is_a?(Tempfile)
+    assert_equal model.uploaded_file.object_id, model.uploaded_file.object_id, 'uploaded_file should return the same instance each time'
+    assert_equal data, model.uploaded_data # after converting to an uploaded_file
+    assert_equal data, contents_of(model.uploaded_file)
+    assert_equal data, model.uploaded_data
+    assert_equal 'bin', model.file_extension
+    model.file_extension = 'ext'
+    assert_equal 'ext', model.file_extension
+    
+    model = SomeModel.new
     model.uploaded_data = StringIO.new('test #2')
     assert_equal 7, model.size
     assert_equal nil, model.content_type
