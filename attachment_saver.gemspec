@@ -14,18 +14,12 @@ of processing.  Errors are carefully handled to minimize the possibility of
 broken uploads leaving incomplete or corrupt data.
 
 RMagick, MiniMagick, and ImageScience image processors are supported.
-
-
-Compatibility
-=============
-
-Currently tested against Rails 3.2.13 and 3.1.8, on Ruby 1.8.7 and 2.0.0p0.
-Was also tested compatible with 2.3.14 and 3.0.17.
 EOF
   gem.has_rdoc     = false
   gem.author       = "Will Bryant"
   gem.email        = "will.bryant@gmail.com"
   gem.homepage     = "http://github.com/willbryant/attachment_saver"
+  gem.license      = 'MIT'
   
   gem.executables  = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files        = `git ls-files`.split("\n")
@@ -33,6 +27,7 @@ EOF
   gem.require_path = "lib"
   
   gem.add_dependency "activerecord"
+  gem.add_dependency "mimemagic"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "image_science"
   gem.add_development_dependency "rmagick"

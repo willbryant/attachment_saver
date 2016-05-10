@@ -23,7 +23,7 @@ module AttachmentSaver
         block.call(image.extend(Operations))
       end
       
-      def examine_attachment
+      def examine_image
         with_image_attributes(uploaded_file_path) do |original_image|
           self.width = original_image.width if respond_to?(:width)
           self.height = original_image.height if respond_to?(:height)

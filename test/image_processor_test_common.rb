@@ -8,6 +8,7 @@ module ImageProcessorTestModel
   
   def self.included(base)
     base.cattr_accessor :attachment_options
+    base.attachment_options = {}
   end
   
   def initialize(uploaded_data)
@@ -36,7 +37,7 @@ module ImageProcessorTests
       model = processor_model.new(File.open(fixture[:path], 'rb'))
       model.content_type = fixture[:content_type]
       model.original_filename = fixture[:original_filename]
-      model.examine_attachment
+      model.examine_image
       assert_equal fixture[:expected_content_type], model.content_type
       assert_equal fixture[:width], model.width
       assert_equal fixture[:height], model.height
@@ -50,7 +51,7 @@ module ImageProcessorTests
     ImageFixtures.all_unreadable.each do |fixture|
       model = processor_model.new(File.open(fixture[:path], 'rb'))
       model.content_type = fixture[:content_type]
-      assert_raises(processor_exception) { model.examine_attachment }
+      assert_raises(processor_exception) { model.examine_image }
       assert_equal fixture[:expected_content_type], model.content_type
       assert_equal nil, model.width
       assert_equal nil, model.height
@@ -61,6 +62,15 @@ module ImageProcessorTests
     end
   end
   
+  def test_image_exploits
+    processor_model.attachment_options = {:valid_image_types => %w(image/png image/jpeg)}
+
+    model = processor_model.new(File.open(ImageFixtures.fixture_path('ssrf.png'), 'rb')) # actually a .mvg file
+    model.expects(:examine_attachment).times(0) # don't invoke the potentially vulnerable image processor code
+    model.before_validate_attachment
+    assert_not_equal 'image/png', model.content_type
+  end
+
   def test_derived_attributes_from_valid
     processor_model.attachment_options = {:formats => ImageOperations.resize_operations}
 

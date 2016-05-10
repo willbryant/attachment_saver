@@ -60,6 +60,14 @@ class ImageFixtures
       :expected_extension => 'js' }
   end
   
+  def self.exploit_file
+    { :path => fixture_path('ssrf.png'), # actually a .mvg file
+      :content_type => 'image/png',
+      :original_filename => 'ssrf.png',
+      :expected_content_type => 'application/octet-stream',
+      :expected_extension => 'mvg' }
+  end
+
   def self.all_readable
     [valid, wrong_extension, no_extension, empty_extension]
   end

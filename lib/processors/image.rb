@@ -1,4 +1,5 @@
 require 'attachment_saver_errors'
+require 'mimemagic'
 
 class ImageProcessorError < AttachmentProcessorError; end
 
@@ -6,14 +7,40 @@ module AttachmentSaver
   module Processors
     # shared code for all image processors
     module Image
+      DEFAULT_VALID_IMAGE_TYPES = %w(image/jpeg image/png image/gif).freeze
+
       def image?
         return false if content_type.blank?
         parts = content_type.split(/\//)
         parts.size == 2 && parts.first.strip == 'image'
       end
+
+      def valid_image_type
+        valid_image_types = self.class.attachment_options[:valid_image_types] || DEFAULT_VALID_IMAGE_TYPES
+
+        uploaded_file.rewind
+        magic = MimeMagic.by_magic(uploaded_file)
+
+        if magic.nil?
+          # if it doesn't look like an image, make sure it's not labelled as an image
+          self.content_type = 'application/octet-stream' if image? || content_type.nil?
+        elsif !valid_image_types.include?(magic.type)
+          # overwrite the content type given by the untrusted client with the real content type; it may get refined later by the image processor
+          self.content_type = magic.type
+        else
+          # seems legit
+          return true
+        end
+
+        errors.add(:content_type, "is invalid") if respond_to?(:errors)
+        false
+      end
       
       def before_validate_attachment
-        examine_attachment unless uploaded_file.nil? || derived_image?
+        unless uploaded_file.nil? || derived_image?
+          return false unless valid_image_type
+          examine_image
+        end
       rescue ImageProcessorError
         # we examine all files, regardless of whether the client browser labelled them an
         # image, because they may be an image with the wrong extension or content type.

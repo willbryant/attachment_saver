@@ -28,7 +28,7 @@ module AttachmentSaver
         with_image(filename, &block)
       end
       
-      def examine_attachment
+      def examine_image
         with_image_attributes(uploaded_file_path) do |original_image|
           self.content_type = original_image.mime_type unless self.class.attachment_options[:keep_content_type] || original_image.mime_type.blank?
           self.file_extension = original_image.file_type_extension unless self.class.attachment_options[:keep_file_extension] || original_image.file_type_extension.blank?
