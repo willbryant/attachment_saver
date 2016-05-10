@@ -1,9 +1,9 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
-require 'mocha'
+require 'mocha/test_unit'
 require 'processors/image'
 require File.expand_path(File.join(File.dirname(__FILE__), 'image_operations'))
 
-class ImageProcessorTest < Test::Unit::TestCase
+class ImageProcessorTest < ActiveSupport::TestCase
   class SomeModel
     include AttachmentSaver::Processors::Image
     

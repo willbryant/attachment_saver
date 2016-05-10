@@ -1,8 +1,8 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
-require 'mocha'
+require 'mocha/test_unit'
 require 'datastores/file_system'
 
-class FileSystemDatastoreTest < Test::Unit::TestCase
+class FileSystemDatastoreTest < ActiveSupport::TestCase
   attr_accessor :storage_key, :original_filename, :content_type
   
   DEFAULT_ATTACHMENT_OPTIONS = {:storage_directory => File.join(TEST_TEMP_DIR, 'fs_store_test'),
@@ -151,6 +151,8 @@ class FileSystemDatastoreTest < Test::Unit::TestCase
       save_attachment_to_test(data)
       save_test_independent_files(file, data)
     end
+  ensure
+    FileUtils.unstub(:ln)
   end
   
   

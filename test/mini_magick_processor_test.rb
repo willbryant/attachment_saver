@@ -1,7 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'image_processor_test_common'))
 require 'processors/mini_magick'
 
-class MiniMagickProcessorTest < Test::Unit::TestCase
+class MiniMagickProcessorTest < ActiveSupport::TestCase
   class MiniMagickTestModel
     include AttachmentSaver::InstanceMethods
     include AttachmentSaver::Processors::MiniMagick

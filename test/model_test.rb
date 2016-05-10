@@ -28,7 +28,7 @@ class Unprocessed < ActiveRecord::Base
 end
 
 class LoadedImage < ActiveRecord::Base
-  set_table_name 'images'
+  self.table_name = 'images'
   saves_attachment :processor => 'image_science' # don't create any derived images, but still process the image to get the attributes
 end
 
@@ -38,21 +38,21 @@ class AllInOneTableImages < ActiveRecord::Base
 end
 
 class ImageScienceImage < ActiveRecord::Base
-  set_table_name 'images'
+  self.table_name = 'images'
   saves_attachment :processor => 'ImageScience', :formats => {:small => '200x200'}
 end
 
 class RMagickImage < ActiveRecord::Base
-  set_table_name 'images'
+  self.table_name = 'images'
   saves_attachment :processor => 'RMagick', :formats => {:small => '200x200'}
 end
 
 class MiniMagickImage < ActiveRecord::Base
-  set_table_name 'images'
+  self.table_name = 'images'
   saves_attachment :processor => 'RMagick', :formats => {:small => '200x200'}
 end
 
-class ModelTest < Test::Unit::TestCase
+class ModelTest < ActiveSupport::TestCase
   module ValidUploadedFileAttributes
     def fixture=(value)
       @fixture = value

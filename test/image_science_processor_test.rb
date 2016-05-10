@@ -1,7 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'image_processor_test_common'))
 require 'processors/image_science'
 
-class ImageScienceProcessorTest < Test::Unit::TestCase
+class ImageScienceProcessorTest < ActiveSupport::TestCase
   class ImageScienceTestModel
     include AttachmentSaver::InstanceMethods
     include AttachmentSaver::Processors::ImageScience

@@ -7,17 +7,16 @@ end
 gem 'activesupport', ENV['RAILS_VERSION']
 gem 'activerecord',  ENV['RAILS_VERSION']
 
-require 'test/unit'
+require 'minitest/autorun'
 require 'active_support'
 require 'active_support/test_case'
 require 'active_record'
 require 'active_record/fixtures'
 
 begin
-  require 'ruby-debug'
-  Debugger.start
+  require 'byebug'
 rescue LoadError
-  # ruby-debug not installed, no debugging for you
+  # no debugging for you
 end
 
 RAILS_ROOT = File.dirname(__FILE__)
@@ -42,8 +41,6 @@ load(File.join(File.dirname(__FILE__), "/schema.rb"))
 
 require File.expand_path(File.join(File.dirname(__FILE__), '../init')) # load the plugin
 
-at_exit do # at_exits are run in reverse of declaration order, and Test::Unit runs from an at_exit, so we must declare ours before that require below
+at_exit do
   FileUtils.rm_rf(File.join(File.dirname(__FILE__), 'tmp'))
 end
-
-require 'test/unit'

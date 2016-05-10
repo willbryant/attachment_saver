@@ -1,7 +1,7 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
 require 'attachment_saver'
 
-class AttachmentSaverTest < Test::Unit::TestCase
+class AttachmentSaverTest < ActiveSupport::TestCase
   def test_split_filename
     assert_equal ['a', nil],        AttachmentSaver::split_filename('a')
     assert_equal ['a', ''],         AttachmentSaver::split_filename('a.')

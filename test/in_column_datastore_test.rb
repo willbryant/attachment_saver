@@ -1,8 +1,8 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
-require 'mocha'
+require 'mocha/test_unit'
 require 'datastores/in_column'
 
-class InColumnDatastoreTest < Test::Unit::TestCase
+class InColumnDatastoreTest < ActiveSupport::TestCase
   attr_accessor :data, :original_filename, :content_type
   
   DEFAULT_ATTACHMENT_OPTIONS = {}
