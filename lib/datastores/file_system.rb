@@ -83,7 +83,7 @@ module AttachmentSaver
       end
       
       def in_storage?
-        File.exists?(storage_filename)
+        File.exist?(storage_filename)
       end
       
       def public_path
