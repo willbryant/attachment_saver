@@ -1,5 +1,4 @@
 require 'attachment_saver_errors'
-require 'misc/file_size'
 require 'tmpdir'
 
 module AttachmentSaver
