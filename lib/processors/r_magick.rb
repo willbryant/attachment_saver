@@ -1,7 +1,7 @@
 begin
-  require 'RMagick'
-rescue LoadError
   require 'rmagick'
+rescue LoadError
+  require 'RMagick'
 end
 require 'misc/extended_tempfile'
 require 'processors/image'
