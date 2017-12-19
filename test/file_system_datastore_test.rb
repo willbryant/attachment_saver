@@ -47,7 +47,8 @@ class FileSystemDatastoreTest < ActiveSupport::TestCase
     @saved_to = filename
     save_attachment_to_without_record(filename)
   end
-  alias_method_chain :save_attachment_to, :record
+  alias_method :save_attachment_to_without_record, :save_attachment_to
+  alias_method :save_attachment_to, :save_attachment_to_with_record
   
 
   def save_attachment_to_test(expected_data)

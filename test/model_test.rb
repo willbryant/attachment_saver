@@ -155,7 +155,7 @@ class ModelTest < ActiveSupport::TestCase
     model.update_attributes(:uploaded_data => uploaded_file_from(ImageFixtures::valid))
     new_storage_filenames = [model.storage_filename] + model.formats.sort_by(&:format_name).collect(&:storage_filename)
     model.reload
-    model.formats(true)
+    model.formats.reload
     reloaded_storage_filenames = [model.storage_filename] + model.formats.sort_by(&:format_name).collect(&:storage_filename)
     
     assert_equal Image::FORMATS.size, model.formats.size
@@ -182,7 +182,7 @@ class ModelTest < ActiveSupport::TestCase
     OtherImage.want_smalls = false
     model.update_attributes!(:uploaded_data => uploaded_file_from(ImageFixtures::valid))
     #assert_equal ["normal"], model.formats.collect(&:format_name).sort # because we use formats.destroy(..ids..), they really should be removed from the formats collection in memory, but aren't in Rails 1.2.3 :/.  so the normal, expected semantics is that apps must reload to see collection changes.
-    assert_equal ["normal"], model.formats(true).collect(&:format_name).sort
+    assert_equal ["normal"], model.formats.reload.collect(&:format_name).sort
     # note that the small size has not only been not regenerated, it's been deleted
   end
   
