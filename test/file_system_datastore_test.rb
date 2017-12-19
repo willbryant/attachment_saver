@@ -347,8 +347,8 @@ class FileSystemDatastoreTest < ActiveSupport::TestCase
 
     assert_raises(AttachmentProcessorError) { save_attachment }
 
-    assert_equal nil, storage_key, "storage key wasn't reset after processing failed"
-    assert_not_equal nil, @saved_to, "save_attachment_to not called"
+    assert_nil storage_key, "storage key wasn't reset after processing failed"
+    assert_not_nil @saved_to, "save_attachment_to not called"
     assert !File.exist?(@saved_to), "saved file wasn't removed after processing failed"
   end
   

@@ -53,9 +53,9 @@ module ImageProcessorTests
       model.content_type = fixture[:content_type]
       assert_raises(processor_exception) { model.examine_image }
       assert_equal fixture[:expected_content_type], model.content_type
-      assert_equal nil, model.width
-      assert_equal nil, model.height
-      assert_equal nil, model.image_size
+      assert_nil model.width
+      assert_nil model.height
+      assert_nil model.image_size
       assert_equal 'bin', model.file_extension
       model.original_filename = fixture[:original_filename]
       assert_equal fixture[:expected_extension], model.file_extension

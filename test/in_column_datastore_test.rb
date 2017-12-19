@@ -98,7 +98,7 @@ class InColumnDatastoreTest < ActiveSupport::TestCase
     expects(:process_attachment?).times(0)
     expects(:process_attachment).times(0)
     save_attachment
-    assert_equal nil, data
+    assert_nil data
   end
   
   

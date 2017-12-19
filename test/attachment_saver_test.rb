@@ -54,8 +54,8 @@ class AttachmentSaverTest < ActiveSupport::TestCase
   
   def test_default_methods
     model = SomeModel.new
-    assert_equal nil, model.uploaded_data
-    assert_equal nil, model.uploaded_file
+    assert_nil model.uploaded_data
+    assert_nil model.uploaded_file
     assert_equal false, model.process_attachment?
     assert File.directory?(model.tempfile_directory)
   end
@@ -66,10 +66,10 @@ class AttachmentSaverTest < ActiveSupport::TestCase
     model = SomeModel.new
     model.uploaded_data = 'test #1'
     assert_equal 7, model.size
-    assert_equal nil, model.content_type
-    assert_equal nil, model.original_filename
+    assert_nil model.content_type
+    assert_nil model.original_filename
     assert_equal 'test #1', model.uploaded_data # before converting to an uploaded_file
-    assert_not_equal nil, model.uploaded_file
+    assert_not_nil model.uploaded_file
     assert model.uploaded_file.is_a?(Tempfile)
     assert_equal model.uploaded_file.object_id, model.uploaded_file.object_id, 'uploaded_file should return the same instance each time'
     assert_equal 'test #1', model.uploaded_data # after converting to an uploaded_file
@@ -83,10 +83,10 @@ class AttachmentSaverTest < ActiveSupport::TestCase
     data = File.open(ImageFixtures::valid[:path], "rb").read
     model.uploaded_data = data
     assert_equal ImageFixtures::valid[:size], model.size
-    assert_equal nil, model.content_type
-    assert_equal nil, model.original_filename
+    assert_nil model.content_type
+    assert_nil model.original_filename
     assert_equal data, model.uploaded_data # before converting to an uploaded_file
-    assert_not_equal nil, model.uploaded_file
+    assert_not_nil model.uploaded_file
     assert model.uploaded_file.is_a?(Tempfile)
     assert_equal model.uploaded_file.object_id, model.uploaded_file.object_id, 'uploaded_file should return the same instance each time'
     assert_equal data, model.uploaded_data # after converting to an uploaded_file
@@ -99,9 +99,9 @@ class AttachmentSaverTest < ActiveSupport::TestCase
     model = SomeModel.new
     model.uploaded_data = StringIO.new('test #2')
     assert_equal 7, model.size
-    assert_equal nil, model.content_type
-    assert_equal nil, model.original_filename
-    assert_not_equal nil, model.uploaded_file
+    assert_nil model.content_type
+    assert_nil model.original_filename
+    assert_not_nil model.uploaded_file
     assert model.uploaded_file.is_a?(Tempfile)
     assert_equal model.uploaded_file.object_id, model.uploaded_file.object_id, 'uploaded_file should return the same instance each time'
     assert_equal 'test #2', model.uploaded_data
@@ -116,8 +116,8 @@ class AttachmentSaverTest < ActiveSupport::TestCase
       model = SomeModel.new
       model.uploaded_data = tempfile
       assert_equal 7, model.size
-      assert_equal nil, model.content_type
-      assert_equal nil, model.original_filename
+      assert_nil model.content_type
+      assert_nil model.original_filename
       assert_equal tempfile.object_id, model.uploaded_file.object_id, 'uploaded_file should return the originally given tempfile'
       assert_equal 'test #3', model.uploaded_data
       assert_equal 'test #3', contents_of(model.uploaded_file)
@@ -171,9 +171,9 @@ class AttachmentSaverTest < ActiveSupport::TestCase
     
     model = SomeModel.new
     model.uploaded_data = '' # this is what controllers get sent when there's a file field but no file selected; attachment_saver accordingly handles blank strings as a special case
-    assert_equal nil, model.uploaded_file
-    assert_equal nil, model.size
-    assert_equal nil, model.content_type
-    assert_equal nil, model.original_filename
+    assert_nil model.uploaded_file
+    assert_nil model.size
+    assert_nil model.content_type
+    assert_nil model.original_filename
   end
 end
