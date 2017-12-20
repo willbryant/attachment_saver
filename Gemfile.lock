@@ -28,6 +28,7 @@ GEM
       concurrent-ruby (~> 1.0)
     image_science (1.3.0)
       RubyInline (~> 3.9)
+    image_size (1.5.0)
     metaclass (0.0.4)
     mimemagic (0.3.2)
     mini_magick (4.8.0)
@@ -47,6 +48,7 @@ PLATFORMS
 DEPENDENCIES
   attachment_saver!
   image_science
+  image_size
   mini_magick
   mocha
   rake

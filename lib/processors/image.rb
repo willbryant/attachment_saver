@@ -89,6 +89,8 @@ module AttachmentSaver
         end
       rescue AttachmentSaverError
         raise
+      rescue NotImplementedError
+        raise
       rescue Exception => ex
         raise ImageProcessorError, "#{ex.class}: #{ex.message}", ex.backtrace
       end

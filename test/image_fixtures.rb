@@ -73,6 +73,6 @@ class ImageFixtures
   end
   
   def self.all_unreadable
-    [corrupt, non_image_file]
+    [non_image_file, corrupt]
   end
 end

@@ -123,6 +123,8 @@ module AttachmentSaver
       process_attachment(filename)
     rescue AttachmentProcessorError
       raise # pass any exceptions of the correct type (which anything eminating from our processors should be) straight
+    rescue NotImplementedError
+      raise
     rescue Exception => ex
       raise AttachmentProcessorError, "#{ex.class}: #{ex.message}", ex.backtrace # wrap anything else
     end

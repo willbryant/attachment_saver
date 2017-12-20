@@ -32,6 +32,7 @@ EOF
   gem.add_development_dependency "image_science"
   gem.add_development_dependency "rmagick"
   gem.add_development_dependency "mini_magick"
+  gem.add_development_dependency "image_size"
   gem.add_development_dependency "sqlite3"
   gem.add_development_dependency "mocha"
 end
