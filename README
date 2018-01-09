@@ -8,7 +8,7 @@ provided, and the architecture simplifies clean implementation of other types
 of processing.  Errors are carefully handled to minimize the possibility of
 broken uploads leaving incomplete or corrupt data.
 
-RMagick, MiniMagick, and ImageScience image processors are supported.
+RMagick, MiniMagick, ImageScience, and GdkPixbuf image processors are supported.
 
 The pure-ruby ImageSize image processor is also supported (for inspecting images but not resizing them).
 
@@ -118,7 +118,7 @@ A custom image-processing format using your image-processor's features
 ----------------------------------------------------------------------
 
 # in a file in your lib/ directory that's required in somewhere:
-module AttachmentSaver::Processors::RMagick::Operations # or MiniMagick::Operations or ImageScience::Operations - see lib/processors
+module AttachmentSaver::Processors::RMagick::Operations # or MiniMagick::Operations or ImageScience::Operations or GdkPixbuf::Operations - see lib/processors
   # this module is mixed in to the actual image objects built by the processor, so you can call its' methods directly
   def wavy_black_and_white(wave_height, wave_length, &block)
     # RMagick returns the new object; MiniMagick acts on the same object (so you must dup); ImageScience yields; so, look at the existing lib/processors to see the appropriate pattern

@@ -40,7 +40,8 @@ class ImageOperations
       :scaletocover2 =>   [:scale_to_cover, 720, 900],
       
       :coverandcrop1 =>   [:cover_and_crop, 200, 300],
-      :coverandcrop2 =>   [:cover_and_crop, 720, 900],
+      :coverandcrop2 =>   [:cover_and_crop, 300, 200],
+      :coverandcrop3 =>   [:cover_and_crop, 720, 900],
     }
   end
   
@@ -75,7 +76,8 @@ class ImageOperations
       :scaletocover2 =>   [720, 720*600/448],
       
       :coverandcrop1 =>   [200, 300],
-      :coverandcrop2 =>   [720, 900],
+      :coverandcrop2 =>   [300, 200],
+      :coverandcrop3 =>   [720, 900],
     }
   end
   

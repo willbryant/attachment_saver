@@ -132,7 +132,7 @@ module AttachmentSaver
       module Operations
         # if they choose to use this module to implement the resize operations, the processor
         # module just needs to implement width, height, resize_to(new_width, new_height, &block),
-        # and crop_to(new_width, new_height, &block)
+        # and crop_to(new_width, new_height, &block).  they also need with_image for process_attachment.
         
         # squishes the image to the given width and height, without preserving the aspect ratio.
         # yields this image itself if it is already the given size.
