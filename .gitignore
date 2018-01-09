@@ -1,3 +1,5 @@
 test/log/*
 test/tmp/*
 test/attachment_saver_test_sqlite.db
+samples.html
+samples/
