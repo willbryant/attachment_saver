@@ -22,6 +22,7 @@ module AttachmentSaver
         image = loader.pixbuf
         image.extend(Operations)
         image.format = loader.format.name
+        image.file_extension = normalize_extension(loader.format.extensions.first)
         block.call(image)
       end
 
@@ -55,7 +56,7 @@ module AttachmentSaver
           # both original_filename and content_type must be defined for parents when using image processing
           # - but apps can just define them using attr_accessor if they don't want them persisted to db
           derived_content_type = content_type
-          derived_extension = derived_image.file_type_extension
+          derived_extension = derived_image.file_extension
 
           # we leverage tempfiles as discussed in the uploaded_file method
           temp = ExtendedTempfile.new("asgtemp", tempfile_directory, derived_extension)
@@ -78,19 +79,13 @@ module AttachmentSaver
       module Operations
         include AttachmentSaver::Processors::Image::Operations
 
-        attr_accessor :format
-
-        def file_type_extension
-          case format
-            when 'jpeg' then 'jpg'
-            else format.downcase
-          end
-        end
+        attr_accessor :format, :file_extension
 
         def resize_to(new_width, new_height, &block)
           image = scale(new_width, new_height)
           image.extend Operations
           image.format = format
+          image.file_extension = file_extension
           block.call(image)
         end
 
@@ -98,6 +93,7 @@ module AttachmentSaver
           image = Gdk::Pixbuf.new(self, (width - new_width)/2, (height - new_height)/2, new_width, new_height)
           image.extend Operations
           image.format = format
+          image.file_extension = file_extension
           block.call(image)
         end
       end
