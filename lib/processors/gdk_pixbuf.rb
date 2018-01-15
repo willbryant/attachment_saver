@@ -10,9 +10,9 @@ module AttachmentSaver
       include Image
 
       def with_image(filename, &block)
-        # we use Gdk::PixbufLoader rather than Gdk::Pixbuf.new(filename) so that we can learn the format of the
+        # we use GdkPixbuf::PixbufLoader rather than GdkPixbuf::Pixbuf.new(filename) so that we can learn the format of the
         # image, which process_image wants to know so that it can save the derived images in the same format.
-        loader = Gdk::PixbufLoader.new
+        loader = ::GdkPixbuf::PixbufLoader.new
         File.open(filename, "rb") do |file|
           while buf = file.read(65536)
             loader.write(buf)
@@ -27,7 +27,7 @@ module AttachmentSaver
       end
 
       def examine_image
-        fileinfo, width, height = Gdk::Pixbuf.get_file_info(uploaded_file_path)
+        fileinfo, width, height = ::GdkPixbuf::Pixbuf.get_file_info(uploaded_file_path)
         raise GdkPixbufProcessorError, "Not an image" if fileinfo.nil?
 
         self.width = width if respond_to?(:width)
@@ -90,7 +90,7 @@ module AttachmentSaver
         end
 
         def crop_to(new_width, new_height, &block) # crops to the center
-          image = Gdk::Pixbuf.new(self, (width - new_width)/2, (height - new_height)/2, new_width, new_height)
+          image = new_subpixbuf((width - new_width)/2, (height - new_height)/2, new_width, new_height)
           image.extend Operations
           image.format = format
           image.file_extension = file_extension
