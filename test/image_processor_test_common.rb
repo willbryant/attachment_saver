@@ -35,6 +35,10 @@ module ImageProcessorTests
     true # overridden for examine-only processors
   end
 
+  def saves_to_gif_format?
+    true
+  end
+
   def test_attributes_from_valid
     processor_model.attachment_options = {}
     ImageFixtures.all_readable.each do |fixture|
@@ -109,6 +113,38 @@ module ImageProcessorTests
         assert_equal size.first, derived[:width], "#{format_name} width incorrect"
         assert_equal size.last, derived[:height], "#{format_name} height incorrect"
         assert_equal model.file_extension, derived[:file_extension], "#{format_name} file_extension incorrect"
+      end
+    else
+      assert_raise(NotImplementedError) do
+        model.process_attachment(model.uploaded_file_path)
+      end
+    end
+  end
+
+  def test_derived_attributes_from_gif
+    processor_model.attachment_options = {:formats => ImageOperations.resize_operations}
+
+    fixture = ImageOperations.original_gif_image
+    model = processor_model.new(File.open(fixture[:path], 'rb'))
+    model.content_type = fixture[:content_type]
+    model.original_filename = fixture[:original_filename]
+
+    if processes_images?
+      model.process_attachment(model.uploaded_file_path)
+
+      ImageOperations.expected_results.each do |format_name, size|
+        derived = model.find_derived(format_name)
+        assert !derived.nil?, "no derived image named #{format_name} generated"
+        assert_equal size.first, derived[:width], "#{format_name} width incorrect"
+        assert_equal size.last, derived[:height], "#{format_name} height incorrect"
+
+        if saves_to_gif_format?
+          assert_equal model.file_extension, derived[:file_extension], "#{format_name} file_extension incorrect"
+          assert_equal fixture[:content_type], derived[:content_type]
+        else
+          assert_equal "png", derived[:file_extension], "#{format_name} file_extension incorrect"
+          assert_equal "image/png", derived[:content_type]
+        end
       end
     else
       assert_raise(NotImplementedError) do

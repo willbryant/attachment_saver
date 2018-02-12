@@ -53,16 +53,24 @@ module AttachmentSaver
         result = original_image.send(*resize_format) do |derived_image|
           return nil unless want_format?(derived_format_name, derived_image.width, derived_image.height)
 
-          # both original_filename and content_type must be defined for parents when using image processing
-          # - but apps can just define them using attr_accessor if they don't want them persisted to db
-          derived_content_type = content_type
-          derived_extension = derived_image.file_extension
+          if original_image.format == 'gif'
+            # as a special case hack, don't try and save derived images into GIF format (gdk_pixbuf2 doesn't support that)
+            derived_content_type = 'image/png'
+            derived_extension = 'png'
+            format = 'png'
+          else
+            # both original_filename and content_type must be defined for parents when using image processing
+            # - but apps can just define them using attr_accessor if they don't want them persisted to db
+            derived_content_type = content_type
+            derived_extension = derived_image.file_extension
+            format = original_image.format
+          end
 
           # we leverage tempfiles as discussed in the uploaded_file method
           temp = ExtendedTempfile.new("asgtemp", tempfile_directory, derived_extension)
           temp.binmode
           temp.close
-          derived_image.save(temp.path, original_image.format)
+          derived_image.save(temp.path, format)
           temp.open # we close & reopen so we see the file the processor wrote to, even if it created a new file rather than writing into our tempfile
 
           { :format_name => derived_format_name.to_s,

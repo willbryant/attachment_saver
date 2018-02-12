@@ -17,4 +17,8 @@ class ImageScienceProcessorTest < ActiveSupport::TestCase
   end
 
   include ImageProcessorTests
+
+  def saves_to_gif_format?
+    false
+  end
 end

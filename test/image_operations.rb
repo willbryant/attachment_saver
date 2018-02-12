@@ -8,7 +8,15 @@ class ImageOperations
       :width => 448,
       :height => 600 }
   end
-  
+
+  def self.original_gif_image
+    { :path => ImageFixtures::fixture_path('test.gif'),
+      :content_type => 'image/gif',
+      :original_filename => 'test.gif',
+      :width => 100,
+      :height => 73 }
+  end
+
   def self.resize_operations
     {
       :squish1 =>         [:squish, 100, 50],
