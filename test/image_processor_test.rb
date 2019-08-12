@@ -1,5 +1,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
-require 'mocha/test_unit'
+require 'mocha/minitest'
 require 'processors/image'
 require File.expand_path(File.join(File.dirname(__FILE__), 'image_operations'))
 
