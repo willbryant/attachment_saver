@@ -98,7 +98,8 @@ module AttachmentSaver
         end
 
         def crop_to(new_width, new_height, &block) # crops to the center
-          image = new_subpixbuf((width - new_width)/2, (height - new_height)/2, new_width, new_height)
+          method = respond_to?(:subpixbuf) ? :subpixbuf : :new_subpixbuf
+          image = send(method, (width - new_width)/2, (height - new_height)/2, new_width, new_height)
           image.extend Operations
           image.format = format
           image.file_extension = file_extension
