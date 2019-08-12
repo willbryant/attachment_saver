@@ -1,5 +1,4 @@
 require 'gdk_pixbuf2'
-require 'misc/extended_tempfile'
 require 'processors/image'
 
 class GdkPixbufProcessorError < ImageProcessorError; end
@@ -67,7 +66,7 @@ module AttachmentSaver
           end
 
           # we leverage tempfiles as discussed in the uploaded_file method
-          temp = ExtendedTempfile.new("asgtemp", tempfile_directory, derived_extension)
+          temp = Tempfile.new(["asgtemp", ".#{derived_extension}"], tempfile_directory)
           temp.binmode
           temp.close
           derived_image.save(temp.path, format)

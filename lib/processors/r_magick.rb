@@ -3,7 +3,6 @@ begin
 rescue LoadError
   require 'RMagick'
 end
-require 'misc/extended_tempfile'
 require 'processors/image'
 
 class RMagickProcessorError < ImageProcessorError; end
@@ -48,7 +47,7 @@ module AttachmentSaver
           derived_extension = derived_image.file_type_extension
       
           # we leverage tempfiles as discussed in the uploaded_file method
-          temp = ExtendedTempfile.new("asrtemp", tempfile_directory, derived_extension)
+          temp = Tempfile.new(["asrtemp", ".#{derived_extension}"], tempfile_directory)
           temp.binmode
           temp.close
           derived_image.write(temp.path)

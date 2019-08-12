@@ -1,6 +1,5 @@
 require 'mini_magick'
 require 'misc/mini_magick_extensions'
-require 'misc/extended_tempfile'
 require 'processors/image'
 
 class MiniMagickProcessorError < ImageProcessorError; end
@@ -53,7 +52,7 @@ module AttachmentSaver
           derived_extension = derived_image.file_type_extension
       
           # we leverage tempfiles as discussed in the uploaded_file method
-          temp = ExtendedTempfile.new("asmtemp", tempfile_directory, derived_extension)
+          temp = Tempfile.new(["asmtemp", ".#{derived_extension}"], tempfile_directory)
           temp.binmode
           temp.close
           derived_image.write(temp.path)

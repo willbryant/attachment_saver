@@ -1,6 +1,5 @@
 require 'image_science'
 require 'misc/image_science_extensions'
-require 'misc/extended_tempfile'
 require 'processors/image'
 
 class ImageScienceProcessorError < ImageProcessorError; end
@@ -51,7 +50,7 @@ module AttachmentSaver
           end
       
           # we leverage tempfiles as discussed in the uploaded_file method
-          temp = ExtendedTempfile.new("asitemp", tempfile_directory, derived_extension)
+          temp = Tempfile.new(["asitemp", ".#{derived_extension}"], tempfile_directory)
           temp.binmode
           temp.close
           derived_image.save(temp.path)

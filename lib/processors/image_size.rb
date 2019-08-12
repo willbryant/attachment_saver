@@ -1,5 +1,4 @@
 require 'image_size'
-require 'misc/extended_tempfile'
 require 'processors/image'
 
 class ImageSizeProcessorError < ImageProcessorError; end
