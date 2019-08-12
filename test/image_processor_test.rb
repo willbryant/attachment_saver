@@ -43,19 +43,24 @@ class ImageProcessorTest < ActiveSupport::TestCase
     model_without_upload.expects(:examine_image).times(0)
     model_without_upload.before_validate_attachment
     
-    model_with_upload = SomeModel.new('application/octet-stream')
-    model_with_upload.expects(:uploaded_file).at_least(:once).returns(StringIO.new('dummy'))
-    model_with_upload.expects(:examine_image).times(1)
-    model_with_upload.before_validate_attachment
-    
-    model_with_non_image_upload = SomeModel.new('text/plain')
-    model_with_non_image_upload.expects(:uploaded_file).at_least(:once).returns(StringIO.new('dummy'))
-    model_with_non_image_upload.expects(:examine_image).times(1).raises(ImageProcessorError)
-    model_with_non_image_upload.before_validate_attachment
-    assert_equal 'text/plain', model_with_non_image_upload.content_type
-    
+    model_with_upload_with_non_image_magic = SomeModel.new('application/octet-stream')
+    model_with_upload_with_non_image_magic.expects(:uploaded_file).at_least_once.returns(StringIO.new('dummy'))
+    model_with_upload_with_non_image_magic.expects(:examine_image).times(0)
+    model_with_upload_with_non_image_magic.before_validate_attachment
+
+    model_with_upload_with_image_magic = SomeModel.new('application/octet-stream')
+    model_with_upload_with_image_magic.expects(:uploaded_file).at_least_once.returns(StringIO.new(File.read(ImageFixtures.fixture_path('test.jpg'))))
+    model_with_upload_with_image_magic.expects(:examine_image).times(1)
+    model_with_upload_with_image_magic.before_validate_attachment
+
+    model_with_invalid_upload_with_image_magic = SomeModel.new('text/plain')
+    model_with_invalid_upload_with_image_magic.expects(:uploaded_file).at_least_once.returns(StringIO.new(File.read(ImageFixtures.fixture_path('test.jpg'))))
+    model_with_invalid_upload_with_image_magic.expects(:examine_image).times(1).raises(ImageProcessorError)
+    model_with_invalid_upload_with_image_magic.before_validate_attachment
+    assert_equal 'text/plain', model_with_invalid_upload_with_image_magic.content_type
+
     model_with_mislabelled_non_image_upload = SomeModel.new('image/png')
-    model_with_mislabelled_non_image_upload.expects(:uploaded_file).at_least(:once).returns(StringIO.new('dummy'))
+    model_with_mislabelled_non_image_upload.expects(:uploaded_file).at_least_once.returns(StringIO.new(File.read(ImageFixtures.fixture_path('test.jpg'))))
     model_with_mislabelled_non_image_upload.expects(:examine_image).times(1).raises(ImageProcessorError)
     model_with_mislabelled_non_image_upload.before_validate_attachment
     assert_equal 'application/octet-stream', model_with_mislabelled_non_image_upload.content_type
